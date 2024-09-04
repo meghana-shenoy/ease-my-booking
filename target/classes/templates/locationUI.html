@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>City Management</h1>
+
+    <div>
+        <h2>Search City</h2>
+        <input type="text" id="searchBox" placeholder="Enter city name">
+        <button onclick="searchCity()">Search</button>
+        <div id="searchError" class="error"></div>
+    </div>
+
+    <div>
+        <h2>Add New City</h2>
+        <input type="text" id="cityName" placeholder="Enter city name">
+        <button onclick="addCity()">Add City</button>
+        <div id="addSuccess" class="success"></div>
+        <div id="addError" class="error"></div>
+    </div>
+
+    <div>
+        <h2>Available Cities</h2>
+        <ul id="cityList">
+        </ul>
+    </div>
+    <div id="data"></div>
+    <script>
+        fetch("/location/id/1").then(res => res.json())
+        .then(data => {
+            document.getElementById("data").innerHTML = data; } );
+    </script>
+</div>
+
+</body>
+</html>
+
+</html>
+
+

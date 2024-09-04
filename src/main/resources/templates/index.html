@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Location Data</title>
+</head>
+<body>
+<h1>Location Details</h1>
+<div id="data" ></div>
+<script>
+          fetch("/location/id/1").then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+            .then(data => {
+                // Format the data into HTML
+                const locationDetails = `
+                    <p><strong>ID:</strong> ${data.lid}</p>
+                    <p><strong>Name:</strong> ${data.lname}</p>
+                `;
+                document.getElementById("data").innerHTML = locationDetails;
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                document.getElementById("data").innerHTML = 'Error fetching location data.';
+            });
+</script>
+</body>
+</html>
