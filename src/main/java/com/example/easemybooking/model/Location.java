@@ -2,46 +2,46 @@ package com.example.easemybooking.model;
 
 import javax.persistence.*;
 import java.util.List;
-
 @Entity
 public class Location {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int lid;
-    private String lname;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "locationSequence")
+    @SequenceGenerator(name = "locationSequence" , allocationSize = 0)
+    private int locationId;
+    private String locationName;
+
+
+    public Location(int locationId, String lname) {
+        this.locationId = locationId;
+        this.locationName = lname;
+    }
 
     public Location() {
+
     }
 
-    public Location(int lid, String lname) {
-        this.lid = lid;
-        this.lname = lname;
+    public int getLocationId() {
+        return locationId;
     }
 
-    @OneToMany(mappedBy = "location")
-    private List<Destination> destination;
-
-    public int getLid() {
-        return lid;
+    public void setLocationId(int lid) {
+        this.locationId = lid;
     }
 
-    public void setLid(int lid) {
-        this.lid = lid;
+    public String getLocationName() {
+        return locationName;
     }
 
-    public String getLname() {
-        return lname;
-    }
-
-    public void setLname(String lname) {
-        this.lname = lname;
+    public void setLocationName(String lname) {
+        this.locationName = lname;
     }
 
     @Override
     public String toString() {
         return "Location{" +
-                "lid='" + lid + '\'' +
-                ", lname='" + lname + '\'' +
+                "lid='" + locationId + '\'' +
+                ", lname='" + locationName + '\'' +
                 '}';
     }
 }

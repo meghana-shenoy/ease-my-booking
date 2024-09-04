@@ -11,9 +11,9 @@ public class Offer {
     private Integer winteroff;
     private Integer rainoff;
     private Integer tot_reduction;
-
-    @OneToOne(mappedBy = "offer")
-    private Booking booking;
+//
+//    @OneToOne(mappedBy = "offer")
+//    private Booking booking;
 
     public int getOfid() {
         return ofid;
@@ -54,14 +54,14 @@ public class Offer {
     public void setTot_reduction(Integer tot_reduction) {
         this.tot_reduction = tot_reduction;
     }
-
-    public Booking getBooking() {
-        return booking;
-    }
-
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
+//
+//    public Booking getBooking() {
+//        return booking;
+//    }
+//
+//    public void setBooking(Booking booking) {
+//        this.booking = booking;
+//    }
 
     @Override
     public String toString() {
@@ -71,7 +71,6 @@ public class Offer {
                 ", winteroff=" + winteroff +
                 ", rainoff=" + rainoff +
                 ", tot_reduction=" + tot_reduction +
-                ", booking=" + booking +
                 '}';
     }
 }

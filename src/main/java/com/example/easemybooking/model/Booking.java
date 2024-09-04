@@ -1,5 +1,9 @@
 package com.example.easemybooking.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -16,17 +20,18 @@ public class Booking {
     private Integer total_fee;
     private boolean visit_completed = false;
 
+
     @ManyToOne
     @JoinColumn(name="destinationId")
+//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "destinationId")
+//    @JsonIdentityReference(alwaysAsId = true)
     private Destination destination;
 
     @ManyToOne
     @JoinColumn(name="customerId")
-    private Customer customer;
-
-    @OneToOne
-    @JoinColumn(name = "offerId")
-    private Offer offer;
+//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
+//    @JsonIdentityReference(alwaysAsId = true)
+    private User user;
 
     @OneToOne
     @JoinColumn(name = "paymentId")
@@ -37,7 +42,7 @@ public class Booking {
     private Cancellation cancellation;
 
 
-    public Booking(int bookingID, Date currentdate, Date bookingdate, Date updatedate, Integer children_count, Integer adult_count, Integer total_fee, boolean visit_completed, Destination destination, Customer customerDetails, Offer offer, Payment payment, Cancellation cancellation) {
+    public Booking(int bookingID, Date currentdate, Date bookingdate, Date updatedate, Integer children_count, Integer adult_count, Integer total_fee, boolean visit_completed, Destination destination, User customerDetails, Payment payment, Cancellation cancellation) {
         this.bookingID = bookingID;
         this.currentdate = currentdate;
         this.bookingdate = bookingdate;
@@ -47,10 +52,13 @@ public class Booking {
         this.total_fee = total_fee;
         this.visit_completed = visit_completed;
         this.destination = destination;
-        this.customer = customerDetails;
-        this.offer = offer;
+        this.user = customerDetails;
         this.payment = payment;
         this.cancellation = cancellation;
+    }
+
+    public Booking() {
+
     }
 
     public Destination getDestination() {
@@ -61,13 +69,6 @@ public class Booking {
         this.destination = destination;
     }
 
-    public Offer getOffer() {
-        return offer;
-    }
-
-    public void setOffer(Offer offer) {
-        this.offer = offer;
-    }
 
     public Payment getPayment() {
         return payment;
@@ -149,22 +150,11 @@ public class Booking {
         this.visit_completed = visit_completed;
     }
 
-//    public Destination getDestination() {
-//        return destination;
-//    }
-//
-//    public void setDestination(Destination destination) {
-//        this.destination = destination;
-//    }
-
-
-    public Customer getCustomerDetails() {
-        return customer;
+    public User getUser() {
+        return user;
     }
 
-    public void setCustomerDetails(Customer customerDetails) {
-        this.customer = customerDetails;
+    public void setUser(User user) {
+        this.user = user;
     }
-
-
 }

@@ -7,33 +7,48 @@ import java.util.Date;
 @Entity
 public class Cancellation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cid;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cancelSequence")
+    @SequenceGenerator(name = "cancelSequence" , allocationSize = 0)
+    private int cancellationId;
+
     private Date cancellation_date;
     private float refund_amt;
 
-    @OneToOne(mappedBy = "cancellation")
+    @OneToOne()
+    @JoinColumn(name = "bookingId")
     private Booking booking;
 
-    public Cancellation(int cid, Date cancellation_date, float refund_amt) {
-        this.cid = cid;
+    public Cancellation(int cancellationId, Date cancellation_date, float refund_amt) {
+        this.cancellationId = cancellationId;
         this.cancellation_date = cancellation_date;
         this.refund_amt = refund_amt;
     }
 
-    public Cancellation(int cid, Date cancellation_date, float refund_amt, Booking booking) {
-        this.cid = cid;
+    public Cancellation(int cancellationId, Date cancellation_date, float refund_amt, Booking booking) {
+        this.cancellationId = cancellationId;
         this.cancellation_date = cancellation_date;
         this.refund_amt = refund_amt;
         this.booking = booking;
     }
 
-    public int getBid() {
-        return cid;
+    public Cancellation() {
+
     }
 
-    public void setBid(int bid) {
-        this.cid = bid;
+    public int getCancellationId() {
+        return cancellationId;
+    }
+
+    public void setCancellationId(int cancellationId) {
+        this.cancellationId = cancellationId;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
     public Date getCancellation_date() {
@@ -55,11 +70,9 @@ public class Cancellation {
     @Override
     public String toString() {
         return "Cancellation{" +
-                "cid='" + cid + '\'' +
+                "cid='" + cancellationId + '\'' +
                 ", cancellation_date=" + cancellation_date +
                 ", refund_amt=" + refund_amt +
                 '}';
     }
 }
-
-

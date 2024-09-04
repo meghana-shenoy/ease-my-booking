@@ -1,7 +1,9 @@
 package com.example.easemybooking.ext;
 
 
-import com.example.easemybooking.controller.LoginController;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.jsonwebtoken.Jwt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -15,21 +17,25 @@ import java.io.IOException;
 public class LoginFilter implements Filter {
 
     private final JwtBuilder jwtBuilder;
+
     private final PasswordEncoder passwordEncoder;
 
     public LoginFilter(JwtBuilder jwtBuilder, PasswordEncoder passwordEncoder) {
         this.jwtBuilder = jwtBuilder;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         try {
+
             HttpServletRequest req = (HttpServletRequest) servletRequest;
             System.out.println("url = " + req.getRequestURL());
 
             if(req.getRequestURL().toString().endsWith("/") ||
-                    req.getRequestURL().toString().endsWith("/login") || req.getRequestURL().toString().endsWith("/register"))
+                    req.getRequestURL().toString().endsWith("/login") ||
+                    req.getRequestURL().toString().endsWith("/register") ||
+                req.getRequestURL().toString().endsWith("/logout"))
             {
                 System.out.println("exempted Urls , go ahead");
                 filterChain.doFilter(servletRequest,servletResponse);
@@ -39,29 +45,20 @@ public class LoginFilter implements Filter {
             {
                 String auth  = req.getHeader("Authorization");
                 System.out.println("token:" + auth );
-                System.out.println(LoginController.checkusername);
-                String jwt = "";
-                try {
-                    jwt = jwtBuilder.parseJwt(auth);
-                    if(jwt.equals(LoginController.checkusername)) {
-                        System.out.println("successful!");
+                if(auth !=null) {
+                    String username = verified(auth);
+                    if(username != null ) {
+                        servletRequest.setAttribute("username", username);
                         filterChain.doFilter(servletRequest,servletResponse);
                         return ;
                     }
                 }
-                catch (Exception e) {
-                    servletResponse.getWriter().println("unauthorized access");
-                }
-                System.out.println("hi");
-//                if(customerService.checkcustomer(jwt)) {
-//                    System.out.println("successful!");
-//                    filterChain.doFilter(servletRequest,servletResponse);
-//                    return ;
-//                }
-//                else {
-//                    servletResponse.getWriter().println("unauthorized access");
-//                }
+
+
+                servletResponse.getWriter().println("unauthorized access");
+                // no filter chain
             }
+
         }
         catch (Exception e)
         {
@@ -70,16 +67,18 @@ public class LoginFilter implements Filter {
         filterChain.doFilter(servletRequest,servletResponse);
     }
 
+
     public boolean matches(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
+    private String verified(String auth) {
+        auth = auth.substring(7);
+        // jwtBuilder match the token
+        Jwt<?, ?> jwt = jwtBuilder.parseJwt(auth);
+        Object payload = jwt.getPayload();
+        JsonNode json = (JsonNode) payload;
+        return json.get("username").toString();
 
-//    private String verified(String auth) {
-//        auth = auth.substring(7);
-//        Jwt<?, ?> jwt = jwtBuilder.parseJwt(auth);
-//        Object payload = jwt.getPayload();
-//        JsonNode json = (JsonNode) payload;
-//        return json.get("username").toString();
-//    }
+    }
 }

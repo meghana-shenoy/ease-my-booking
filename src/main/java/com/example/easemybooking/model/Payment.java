@@ -5,9 +5,13 @@ import javax.persistence.*;
 @Entity
 public class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "paymentSequence")
+    @SequenceGenerator(name = "paymentSequence" , allocationSize = 0)
     private int paymentID;
-    private String mode_payment;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentType mode_payment;
+
     private Float total_amt;
 
     @OneToOne(mappedBy = "payment")
@@ -17,15 +21,15 @@ public class Payment {
         return paymentID;
     }
 
-    public void setpaymentID(int paymentID) {
+    public void setPaymentID(int paymentID) {
         this.paymentID = paymentID;
     }
 
-    public String getMode_payment() {
+    public PaymentType getMode_payment() {
         return mode_payment;
     }
 
-    public void setMode_payment(String mode_payment) {
+    public void setMode_payment(PaymentType mode_payment) {
         this.mode_payment = mode_payment;
     }
 

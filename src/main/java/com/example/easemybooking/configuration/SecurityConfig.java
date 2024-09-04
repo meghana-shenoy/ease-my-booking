@@ -1,7 +1,6 @@
 package com.example.easemybooking.configuration;
 
-import com.example.easemybooking.ext.LoginFilter;
-import com.example.easemybooking.service.CustomerService;
+import com.example.easemybooking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // private UserDetailsService userDetailsService;
 
     @Autowired
-    private CustomerService userService;
+    private UserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,7 +30,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
 
@@ -44,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public String encodePassword(String rawPassword) {
         return passwordEncoder().encode(rawPassword);
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

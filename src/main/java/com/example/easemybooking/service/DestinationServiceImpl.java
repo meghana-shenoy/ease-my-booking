@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
 public class DestinationServiceImpl implements DestinationService{
     @Autowired
@@ -15,14 +14,14 @@ public class DestinationServiceImpl implements DestinationService{
 
 
     @Override
-    public Destination findDestinationByDid(int id) {
+    public Destination findByDestinationId(int id) {
         System.out.println("hi");
         return destinationRepo.findById(id).orElse(null);
     }
 
     @Override
     public List<Destination> findDestinationsByLid(int id) {
-        return destinationRepo.findByLocation_Lid(id);
+        return destinationRepo.findByLocation_LocationId(id);
     }
 
     @Transactional
@@ -61,27 +60,4 @@ public class DestinationServiceImpl implements DestinationService{
         }
         return true;
     }
-
-
-//    @Override
-//    public Destination findDestinationByDname(String DestinationName) {
-//        return destinationRepo.findByDname(DestinationName);
-//    }
-
-//    @Override
-//    public List<Destination> findAll() {
-//        return destinationRepo.findAll();
-//    }
-
-//    @Override
-//    public List<Destination> findDestinationsByLname(String name) {
-//        return null;
-//    }
-
-
-//    @Override
-//    public Destination findDestinationByDname(String name) {
-//        return destinationRepo.findByDname(name);
-//    }
-
 }

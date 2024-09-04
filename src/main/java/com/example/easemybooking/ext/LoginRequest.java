@@ -1,21 +1,21 @@
 package com.example.easemybooking.ext;
 
 public class LoginRequest {
-    private int email;
+    private String username;
     private String password;
 
-    public LoginRequest(int email, String password) {
-        this.email = email;
+    public LoginRequest(String email, String password) {
+        this.username = email;
         this.password = password;
     }
 
     // Getters and setters
-    public int getEmail() {
-        return email;
+    public String getEmail() {
+        return username;
     }
 
-    public void setEmail(int email) {
-        this.email = email;
+    public void setEmail(String email) {
+        this.username = email;
     }
 
     public String getPassword() {

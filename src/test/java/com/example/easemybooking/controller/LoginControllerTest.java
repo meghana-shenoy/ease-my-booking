@@ -1,40 +1,50 @@
 package com.example.easemybooking.controller;
 
-
-import com.example.easemybooking.ext.LoginRequest;
-import com.example.easemybooking.model.Customer;
-import com.example.easemybooking.service.CustomerService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.easemybooking.ext.JwtBuilder;
+import com.example.easemybooking.model.User;
+import com.example.easemybooking.service.UserService;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LoginControllerTest {
+public class LoginControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    @MockBean
+    private AuthenticationManager authenticationManager;
 
-    @Autowired
-    CustomerService customerService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    @MockBean
+    private JwtBuilder jwtUtil;
 
     @Mock
     private UserService userService;
@@ -45,102 +55,70 @@ class LoginControllerTest {
     @InjectMocks
     private LoginController loginController;
 
+
     @Test
-    void login() throws Exception {
-        LoginRequest loginRequest = new LoginRequest(3, "password");
-        // Convert LoginRequest to JSON
-        String requestBody = objectMapper.writeValueAsString(loginRequest);
-        // JWT pattern matcher
+    void loginSuccess() throws Exception {
         String jwtPattern = "^([a-zA-Z0-9_=]+)\\.([a-zA-Z0-9_=]+)\\.([a-zA-Z0-9_\\-\\+\\/=]*)$";
-        // Perform the request
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/login")
+        ResultActions result = mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody));
-
-        // Assert status and response
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("token").value(Matchers.matchesPattern(jwtPattern)));
+                .param("username", "meghana")
+                .param("password", "meghana"));
+        String responseContent = result.andReturn().getResponse().getContentAsString();
+        result.andExpect(MockMvcResultMatchers.status().isOk());
+        result.andExpect(content().string(Matchers.matchesPattern(responseContent)));
     }
 
 
-
-
-//    @Test
-//    void InvalidPassword() throws Exception {
-//        LoginRequest loginRequest = new LoginRequest(4, "wrongpassword");
-//        ResultActions result = mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON).content(String.valueOf(loginRequest)));
-//        result.andExpect(status().isBadRequest());
-//    }
-//    @Test
-//    void UnknownUser() throws Exception{
-//        LoginRequest loginRequest = new LoginRequest("xyz@gmail.com", "password");
-//        ResultActions result = mockMvc.perform(post("/login")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(String.valueOf(loginRequest)));
-//        result.andExpect(status().isBadRequest());
-//    }
 
     @Test
-    void createCustomer() throws Exception {
-        String email = "test2@example.com";
-        String password = "password";
-        String fname = "test";
-        String lname = "case";
-        String contactNo = "123456789";
-        String mname = ".";
+    public void loginFailure() throws Exception {
 
-//        String customerType = "USER";
-        Customer newCustomer = new Customer();
-        newCustomer.setCemail(email);
-        newCustomer.setPassword(password);
-        newCustomer.setCfname(fname);
-        newCustomer.setClname(lname);
-        newCustomer.setCcphoneno(contactNo);
-        newCustomer.setCmidname(mname);
-
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        String jwtPattern = "^([a-zA-Z0-9_=]+)\\.([a-zA-Z0-9_=]+)\\.([a-zA-Z0-9_\\-\\+\\/=]*)$";
+        ResultActions result = mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newCustomer)));
+                .param("username", "manya")
+                .param("password", "aaa"));
 
-        String responseContent = resultActions.andReturn().getResponse().getContentAsString();
-        System.out.println("Response Content: " + responseContent);
-        // Then
-        resultActions.andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("cfname").value(fname));
+        result.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @Test
+    public void testRegister_Success() {
+        User user = new User();
+        user.setUsername("testuser");
+        user.setPassword("password");
 
+        Mockito.when(userService.findByUsername("testuser")).thenReturn(null);
+        Mockito.when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
 
+        User registeredUser = loginController.register(user);
 
-//
-//    @Test
-//    void customerExists() throws Exception{
-//        String name = "test";
-//        String contactNo = "123456789";
-//        int locationId = 10;
-//        String email = "test@example.com";
-//        String password = "password";
-//        String customerType = "USER";
-//        Customer existingCustomer = new Customer();
-//        existingCustomer.setCustomerEmail(email);
-//        existingCustomer.setCustomerPassword(password);
-//        existingCustomer.setCustomerName(name);
-//        existingCustomer.setCustomerType(customerType);
-//        existingCustomer.setCustomerPhone(contactNo);
-//        existingCustomer.setLocationId(locationId);
-//        // When
-//        ResultActions resultActions = mockMvc.perform(post("/sign-up")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(existingCustomer)));
-//        // Then
-//        resultActions.andExpect(status().isBadRequest())
-//                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.valueOf("text/plain;charset=UTF-8")))
-//                .andExpect(MockMvcResultMatchers.content().string("Customer already exists"));
-//    }
+        assertNotNull(registeredUser);
+        assertEquals("testuser", registeredUser.getUsername());
+        assertEquals("encodedPassword", registeredUser.getPassword());
+
+        verify(userService, times(1)).findByUsername("testuser");
+        verify(passwordEncoder, times(1)).encode("password");
+        verify(userService, times(1)).addUser(user);
+    }
+
+    @Test
+    public void testRegister_UserAlreadyExists() {
+        User user = new User();
+        user.setUsername("existinguser");
+        user.setPassword("password");
+
+        when(userService.findByUsername("existinguser")).thenReturn(new User());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            loginController.register(user);
+        });
+
+        assertEquals("User already exists!", exception.getMessage());
+
+        verify(userService, times(1)).findByUsername("existinguser");
+        verify(passwordEncoder, times(0)).encode(anyString());
+        verify(userService, times(0)).addUser(any(User.class));
+    }
+
 }
-
-
-
-
-
-

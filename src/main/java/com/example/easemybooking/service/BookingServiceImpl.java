@@ -19,12 +19,12 @@ public class BookingServiceImpl implements BookingService{
 
 
     @Override
-    public List<Booking> findBookingsByCid(int id) {
-        return bookingRepo.findByCustomer_CustomerId(id);
+    public List<Booking> findbyCustomerId(int id) {
+        return bookingRepo.findByUser_UserId(id);
     }
 
     @Override
-    public List<Booking> findBookingsByDid(int id) {
+    public List<Booking> findbyDestinationId(int id) {
         return bookingRepo.findByDestination_DestinationId(id);
     }
 
@@ -33,7 +33,7 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public Booking addBooking(Booking booking) {
         bookingRepo.save(booking);
-        System.out.println("destination after saving"  +booking);
+        System.out.println("booking after saving"  +booking);
         return booking;
     }
 

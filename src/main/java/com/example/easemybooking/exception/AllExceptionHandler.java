@@ -28,4 +28,8 @@ public class AllExceptionHandler {
     public ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+	@ExceptionHandler(PaymentFailedException.class)
+    public ResponseEntity<String> handlePaymentFailedException(PaymentFailedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

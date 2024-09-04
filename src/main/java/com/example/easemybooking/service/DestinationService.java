@@ -9,6 +9,6 @@ public interface DestinationService {
     Destination updateDestination(Destination destination);
     boolean removebyId(int DestinationId);
     List<Destination> findDestinationsByLid(int id);
-    Destination findDestinationByDid(int id);
+    Destination findByDestinationId(int id);
 
 }

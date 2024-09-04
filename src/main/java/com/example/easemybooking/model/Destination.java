@@ -1,5 +1,10 @@
 package com.example.easemybooking.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -17,20 +22,25 @@ public class Destination {
 
 
     @OneToMany(mappedBy = "destination")
+    @JsonIgnore
     private List<Booking> bookings;
 
     @ManyToOne
     @JoinColumn(name="lid")
+//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "locationId")
+//    @JsonIdentityReference(alwaysAsId = true)
     private Location location;
 
     @ManyToOne
     @JoinColumn(name="ownerid")
-    private Owners owner;
+//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
+//    @JsonIdentityReference(alwaysAsId = true)
+    private User owner;
 
     public Destination() {
     }
 
-    public Destination(int did, Integer adultfee, Integer childfee, String dname, String daddress, String dphoneno, Location location, Owners owner) {
+    public Destination(int did, Integer adultfee, Integer childfee, String dname, String daddress, String dphoneno, Location location, User owner) {
         this.destinationId = did;
         this.adultfee = adultfee;
         this.childfee = childfee;
@@ -98,14 +108,6 @@ public class Destination {
         this.location = location;
     }
 
-    public Owners getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Owners owner) {
-        this.owner = owner;
-    }
-
     @Override
     public String toString() {
         return "Destination{" +
@@ -118,5 +120,13 @@ public class Destination {
                 ", location=" + location +
                 ", owner=" + owner +
                 '}';
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }

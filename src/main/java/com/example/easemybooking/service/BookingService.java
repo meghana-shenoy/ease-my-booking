@@ -7,6 +7,6 @@ import java.util.List;
 public interface BookingService {
     Booking addBooking(Booking booking);
     Booking findBookingbyId(int id);
-    List<Booking> findBookingsByCid(int id);
-    List<Booking> findBookingsByDid(int id);
+    List<Booking> findbyCustomerId(int id);
+    List<Booking> findbyDestinationId(int id);
 }

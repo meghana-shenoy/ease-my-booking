@@ -2,7 +2,6 @@ package com.example.easemybooking.service;
 
 import com.example.easemybooking.model.Location;
 import com.example.easemybooking.model.Payment;
-import com.example.easemybooking.repo.OwnersRepo;
 import com.example.easemybooking.repo.PaymentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,5 +25,19 @@ public class PaymentServiceImpl implements PaymentService{
     public Payment findById(int id) {
         return paymentRepo.findById(id).orElse(null);
     }
+	
+	    @Override
+	
+    public Float calculateTotalTicketCost(Payment payment) {
 
+        return 0f;
+    }
+
+    @Override
+    public Payment updatePayment(Payment payment) {
+        if(payment.getPaymentID() != 0) {
+            return paymentRepo.save(payment);
+        }else
+            return null;
+    }
 }
